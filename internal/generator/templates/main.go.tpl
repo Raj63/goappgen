@@ -8,7 +8,7 @@ import (
 func main() {
 	log.Println("{{.Name}} starting...")
 
-	{{ if .HTTP }}
+	{{ if .Transport.HTTPFramework }}
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello from {{.Name}}"))
 	})

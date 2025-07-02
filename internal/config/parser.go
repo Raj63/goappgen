@@ -2,7 +2,9 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -17,13 +19,17 @@ func LoadConfig(path string) (*AppConfig, error) {
 	}
 
 	cfg := &AppConfig{}
-	if yaml.Unmarshal(data, cfg) == nil {
-		return cfg, nil
+	switch {
+	case filepath.Ext(path) == ".yaml" || filepath.Ext(path) == ".yml":
+		err = yaml.Unmarshal(data, cfg)
+	case filepath.Ext(path) == ".json":
+		err = json.Unmarshal(data, cfg)
+	default:
+		err = errors.New("unsupported config format (use .yaml or .json)")
 	}
 
-	if json.Unmarshal(data, cfg) == nil {
-		return cfg, nil
+	if err != nil {
+		return nil, err
 	}
-
-	return nil, err
+	return cfg, nil
 }

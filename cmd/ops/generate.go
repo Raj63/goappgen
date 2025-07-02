@@ -38,5 +38,5 @@ func init() {
 	rootCmd.AddCommand(generateCmd)
 
 	generateCmd.Flags().StringVarP(&configPath, "config", "c", "config.yaml", "Path to YAML/JSON config file")
-	generateCmd.Flags().StringVarP(&outputPath, "output", "o", "./output", "Output directory for generated apps")
+	generateCmd.Flags().StringVarP(&outputPath, "out", "o", "./output", "Output directory for generated apps")
 }

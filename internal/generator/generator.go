@@ -12,17 +12,44 @@ import (
 // GenerateApp generates a Go application scaffold based on the provided App configuration.
 // It uses templates from templatesDir and writes the output to outputBase/app.Name.
 func GenerateApp(app config.App, templatesDir, outputBase string) error {
-	appPath := filepath.Join(outputBase, app.Name)
-	err := os.MkdirAll(appPath, 0750)
-	if err != nil {
+	appPath := filepath.Join(outputBase, "app", app.Name)
+	if err := os.MkdirAll(appPath, 0750); err != nil {
 		return err
 	}
 
-	files := []string{"main.go.tpl", "Dockerfile.tpl"}
-	for _, fname := range files {
-		if err := renderTemplate(app, templatesDir, appPath, fname); err != nil {
+	// Always render these
+	commonTpls := []string{
+		"main.go.tpl",
+		"Dockerfile.tpl",
+		"go.mod.tpl",
+		"Makefile.tpl",
+		"air.toml.tpl",
+	}
+	for _, tpl := range commonTpls {
+		if err := renderTemplate(app, templatesDir, appPath, tpl); err != nil {
 			return err
 		}
+	}
+
+	// Config template
+	if app.Config.Type != "" {
+		confDir := filepath.Join(appPath, "configs")
+		_ = os.MkdirAll(confDir, 0700)
+		_ = renderTemplate(app, templatesDir, appPath, "configs/config.go.tpl")
+	}
+
+	// Logger
+	if app.Logger.Type != "" {
+		loggerDir := filepath.Join(appPath, "internal", "logger")
+		_ = os.MkdirAll(loggerDir, 0700)
+		_ = renderTemplate(app, templatesDir, appPath, "internal/logger/logger.go.tpl")
+	}
+
+	// DB
+	if app.Database.Type != "" {
+		dbDir := filepath.Join(appPath, "internal", "db")
+		_ = os.MkdirAll(dbDir, 0700)
+		_ = renderTemplate(app, templatesDir, appPath, "internal/db/init.go.tpl")
 	}
 
 	return nil

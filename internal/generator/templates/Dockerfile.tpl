@@ -1,9 +1,10 @@
-FROM golang:1.22
+# syntax=docker/dockerfile:1
+FROM golang:1.21
 
 WORKDIR /app
 COPY . .
 
 RUN go mod tidy
-RUN go build -o main .
+RUN go build -o {{ .Name }}
 
-CMD ["./main"]
+CMD ["./{{ .Name }}"]
