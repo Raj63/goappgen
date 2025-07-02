@@ -1,0 +1,29 @@
+app:
+  - name: inventory-service
+    transport:
+      http: gin
+      grpc: true
+    logger:
+      type: slog
+      output: std
+    config:
+      type: viper
+    cli:
+      cobra: true
+    auth:
+      type: jwt
+    database:
+      type: postgres
+      orm: sqlc
+      cqrs: true
+      migrations: true
+    observability:
+      metrics: prometheus
+      tracing: otel
+      logs: loki
+    devtools:
+      docker: true
+      docker_compose: true
+      air: true
+      makefile: true
+      precommit: true
