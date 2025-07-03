@@ -13,5 +13,6 @@ pkgs.mkShell {
     pkgs.go-tools
     pkgs.pre-commit
     pkgs.gitlint
+    pkgs.act
   ];
 }

@@ -29,3 +29,6 @@ fmt:
 
 modtidy:
 	go mod tidy
+
+local-ci:
+	act -P ubuntu-latest=catthehacker/ubuntu:act-latest -W .github/workflows/ci.yml --container-architecture linux/amd64

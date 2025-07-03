@@ -16,7 +16,7 @@ jobs:
         with:
           go-version: 1.23
       - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+        run: go install github.com/golangci/golangci-lint@v2.1.6
       - name: Lint
         run: golangci-lint run ./...
       - name: Build

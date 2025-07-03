@@ -28,3 +28,6 @@ help: ## Display this help
 
 precommit: ## Run precommit checks
 	pre-commit run --all-files
+
+local-ci:
+	act -P ubuntu-latest=catthehacker/ubuntu:act-latest -W .github/workflows/ci.yml --container-architecture linux/amd64
