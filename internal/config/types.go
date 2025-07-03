@@ -8,6 +8,7 @@ type AppConfig struct {
 // App represents a single application configuration for code generation.
 type App struct {
 	Name          string        `yaml:"name" json:"name"`
+	Description   string        `yaml:"desc" json:"desc"`
 	Transport     Transport     `yaml:"transport" json:"transport"`                             // HTTP/GRPC
 	Logger        Logger        `yaml:"logger" json:"logger"`                                   // slog/zap/logrus/zerolog
 	Config        Provider      `yaml:"config" json:"config"`                                   // viper/env
@@ -16,6 +17,7 @@ type App struct {
 	Database      Database      `yaml:"database" json:"database"`                               // postgres/sqlite/mongo + orm/migrations
 	Observability Observability `yaml:"observability,omitempty" json:"observability,omitempty"` // prometheus/otel
 	DevTools      DevTools      `yaml:"devtools" json:"devtools"`                               // docker, air, makefile, precommit, etc.
+	Storage       Storage       `yaml:"storage" json:"storage"`                                 // S3/MinIO storage
 }
 
 // Transport defines the transport layer configuration (HTTP/GRPC) for the app.
@@ -67,4 +69,15 @@ type DevTools struct {
 	Air            bool `yaml:"air" json:"air"`
 	Makefile       bool `yaml:"makefile" json:"makefile"`
 	PreCommitHooks bool `yaml:"precommit" json:"precommit"`
+}
+
+// Storage defines the S3-compatible storage configuration for the app.
+type Storage struct {
+	Type      string `yaml:"type" json:"type"`         // s3, minio, none
+	Endpoint  string `yaml:"endpoint" json:"endpoint"` // S3/MinIO endpoint
+	AccessKey string `yaml:"access_key" json:"access_key"`
+	SecretKey string `yaml:"secret_key" json:"secret_key"`
+	Bucket    string `yaml:"bucket" json:"bucket"`
+	Region    string `yaml:"region" json:"region"`
+	UseSSL    bool   `yaml:"use_ssl" json:"use_ssl"`
 }

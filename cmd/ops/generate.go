@@ -23,11 +23,8 @@ var generateCmd = &cobra.Command{
 			log.Fatalf("Failed to load config: %v", err)
 		}
 
-		for _, app := range cfg.App {
-			fmt.Printf("Generating app: %s\n", app.Name)
-			if err := generator.GenerateApp(app, "internal/generator/templates", outputPath); err != nil {
-				log.Fatalf("Error generating %s: %v", app.Name, err)
-			}
+		if err := generator.GenerateAll(*cfg, "internal/generator/templates", outputPath); err != nil {
+			log.Fatalf("Error generating apps: %v", err)
 		}
 		fmt.Println("Done.")
 	},

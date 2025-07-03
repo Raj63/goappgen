@@ -1,0 +1,76 @@
+app:
+  - name: inventory-service
+    desc: Inventory microservice
+    transport:
+      http: gin
+      grpc: true
+    logger:
+      type: slog
+      output: std
+    config:
+      type: viper
+    cli:
+      cobra: true
+    auth:
+      type: jwt
+    database:
+      type: postgres
+      orm: gorm
+      cqrs: true
+      migrations: true
+    storage:
+      type: s3
+      endpoint: http://minio:9000
+      access_key: minio
+      secret_key: minio123
+      bucket: inventory
+      region: us-east-1
+      use_ssl: false
+    observability:
+      metrics: prometheus
+      tracing: otel
+      logs: loki
+    devtools:
+      docker: true
+      docker_compose: true
+      air: true
+      makefile: true
+      precommit: true
+
+  - name: billing-service
+    desc: Billing and payments microservice
+    transport:
+      http: echo
+      grpc: false
+    logger:
+      type: zap
+      output: std
+    config:
+      type: envconfig
+    cli:
+      cobra: true
+    auth:
+      type: casbin
+    database:
+      type: mysql
+      orm: sqlc
+      cqrs: false
+      migrations: true
+    storage:
+      type: minio
+      endpoint: http://minio:9000
+      access_key: minio
+      secret_key: minio123
+      bucket: billing
+      region: us-east-1
+      use_ssl: false
+    observability:
+      metrics: prometheus
+      tracing: jaeger
+      logs: loki
+    devtools:
+      docker: true
+      docker_compose: true
+      air: true
+      makefile: true
+      precommit: true 

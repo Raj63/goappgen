@@ -1,29 +1,48 @@
+# Example goappgen config with all possible features and options
 app:
   - name: inventory-service
+    desc: Inventory microservice
+    # --- Transport Layer ---
     transport:
-      http: gin
-      grpc: true
+      http: gin         # Options: gin, echo, chi, fiber
+      grpc: true        # Enable gRPC server (true/false)
+    # --- Logger ---
     logger:
-      type: slog
-      output: std
+      type: slog        # Options: slog, zap, zerolog, logrus
+      output: std       # Options: std, file, both
+    # --- Config Provider ---
     config:
-      type: viper
+      type: viper       # Options: viper, envconfig
+    # --- CLI ---
     cli:
-      cobra: true
+      cobra: true       # Use Cobra CLI (true/false)
+    # --- Auth ---
     auth:
-      type: jwt
+      type: jwt         # Options: jwt, casbin, jwks, goth, authboss
+    # --- Database ---
     database:
-      type: postgres
-      orm: sqlc
-      cqrs: true
-      migrations: true
+      type: postgres    # Options: postgres, sqlite, mongo, mysql, mariadb
+      orm: sqlc         # Options: gorm, pgx, sqlc, none
+      cqrs: true        # Enable CQRS pattern (true/false)
+      migrations: true  # Enable DB migrations (true/false)
+    # --- Storage (S3/MinIO) ---
+    storage:
+      type: s3              # Options: s3, minio, none
+      endpoint: http://minio:9000  # S3/MinIO endpoint
+      access_key: minio     # S3/MinIO access key
+      secret_key: minio123  # S3/MinIO secret key
+      bucket: mybucket      # S3/MinIO bucket name
+      region: us-east-1     # S3/MinIO region
+      use_ssl: false        # Use SSL (true/false)
+    # --- Observability ---
     observability:
-      metrics: prometheus
-      tracing: otel
-      logs: loki
+      metrics: prometheus   # Options: prometheus, none
+      tracing: otel         # Options: otel, jaeger, none
+      logs: loki            # Options: loki, none
+    # --- Dev Tools ---
     devtools:
-      docker: true
-      docker_compose: true
-      air: true
-      makefile: true
-      precommit: true
+      docker: true          # Include Dockerfile (true/false)
+      docker_compose: true  # Include docker-compose (true/false)
+      air: true             # Include Air live reload config (true/false)
+      makefile: true        # Include Makefile (true/false)
+      precommit: true       # Include pre-commit hooks (true/false)

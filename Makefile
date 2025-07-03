@@ -13,8 +13,11 @@ clean: ## Clean up, i.e. remove build artifacts
 	rm -rf $(BUILD_DIR)
 	@go mod tidy
 
-run: build ## Run the binary
-	$(BUILD_DIR)/$(APP_NAME)
+run-simple: build ## Run the binary in single app mode
+	$(BUILD_DIR)/$(APP_NAME) generate --config sample.yaml --out ./output/single-app
+
+run-multi: build ## Run the binary in multi app mode
+	$(BUILD_DIR)/$(APP_NAME) generate --config multi-app.yaml --out ./output/multi-app
 
 .PHONY: test ## Run tests
 test:
