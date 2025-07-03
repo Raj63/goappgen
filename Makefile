@@ -2,12 +2,12 @@ BUILD_DIR := bin
 APP_NAME := goappgen
 .DEFAULT_GOAL:=help
 
-.PHONY: all clean build test run help precommit
+.PHONY: all clean build run-simple test help precommit
 
-all: clean test build run ## Run all tests, then build and run
+all: clean test build run-simple ## Run all tests, then build and run
 
 build: ## build artifacts
-	CGO_ENABLED=0 go build -ldflags="-s -w" -o $(BUILD_DIR)/$(APP_NAME) ./cmd 
+	CGO_ENABLED=0 go build -ldflags="-s -w" -o $(BUILD_DIR)/$(APP_NAME) ./cmd
 
 clean: ## Clean up, i.e. remove build artifacts
 	rm -rf $(BUILD_DIR)

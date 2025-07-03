@@ -62,28 +62,12 @@ app:
       precommit: true
 ```
 
-## 🧠 Summary Table
-| Domain           | Library                                 |
-|------------------|-----------------------------------------|
-| Web Framework    | Gin, Echo, Fiber, Beego                 |
-| Router           | Chi, httprouter                         |
-| Microservices    | Go‑Kit, Goa, Gizmo                      |
-| Logging          | slog, Zap, Zerolog, Logrus              |
-| Config           | Viper, envconfig                        |
-| CLI              | Cobra                                   |
-| Auth/Z Auth      | Casbin, Goth, Authboss, jwt‑go          |
-| DB & Migrations  | pgx/sqlc/gorm, golang‑migrate           |
-| Observability    | Prometheus, OpenTelemetry, Loki, Grafana|
+## Development
 
-## ✅ Integration Roadmap for goappgen
-- **HTTP:** Provide options for Gin, Echo, or Chi + httprouter.
-- **gRPC:** Support via goa or grpc-go.
-- **Logger:** Default to slog, options for Zap or Zerolog.
-- **Config:** Use Viper with JSON/YAML/env support.
-- **CLI:** Cobra entrypoint—already built.
-- **Database:** Scaffold with pgx/gorm, migrations using golang-migrate.
-- **Auth:** Optional plugin for Casbin or jwt-go.
-- **Observability:** Add Prometheus metrics + OpenTelemetry trace snippets.
+- **Build:** `make build`
+- **Test:** `make test`
+- **Lint:** `golangci-lint run`
+- **Pre-commit:** `pre-commit run --all-files`
 
 ## License
-MIT 
+MIT

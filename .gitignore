@@ -6,6 +6,7 @@ bin/
 *.dylib
 
 # Output
+dist/
 output/
 
 # Vendor
@@ -25,4 +26,4 @@ coverage*
 .env.*
 
 # Go
-*.test 
+*.test
