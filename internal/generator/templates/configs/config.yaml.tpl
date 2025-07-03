@@ -36,4 +36,4 @@ s3_use_ssl: false
 # Observability
 {{- if eq .Observability.Metrics "prometheus" }}
 metrics_port: 2112
-{{- end }} 
+{{- end }}

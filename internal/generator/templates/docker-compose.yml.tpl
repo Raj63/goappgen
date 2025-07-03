@@ -142,4 +142,4 @@ volumes:
   pgdata:
   mysqldata:
   mongodata:
-  miniodata: 
+  miniodata:

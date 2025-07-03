@@ -41,4 +41,4 @@ func InitS3Client(ctx context.Context) (*s3.Client, error) {
 		}
 	})
 	return client, nil
-} 
+}

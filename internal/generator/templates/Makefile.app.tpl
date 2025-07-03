@@ -19,4 +19,4 @@ fmt:
 	gofmt -w .
 
 modtidy:
-	go mod tidy 
+	go mod tidy

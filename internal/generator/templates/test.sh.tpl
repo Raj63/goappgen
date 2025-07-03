@@ -6,4 +6,4 @@ for dir in $(find . -type d -name 'internal' -prune -o -type d -name 'app*' -pri
     echo "Testing $dir"
     (cd "$dir" && go test -v ./...)
   fi
-done 
+done

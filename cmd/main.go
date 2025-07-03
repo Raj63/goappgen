@@ -1,3 +1,4 @@
+// Package main is the entry point for the goappgen CLI.
 package main
 
 import "github.com/Raj63/goappgen/cmd/ops"

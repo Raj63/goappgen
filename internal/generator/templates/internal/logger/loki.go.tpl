@@ -35,4 +35,4 @@ func InitLokiLogger(logger interface{}) interface{} {
 	{{- else }}
 	return logger
 	{{- end }}
-} 
+}

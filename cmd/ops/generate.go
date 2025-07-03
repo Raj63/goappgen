@@ -1,3 +1,4 @@
+// Package ops provides CLI subcommands for goappgen.
 package ops
 
 import (
@@ -17,7 +18,7 @@ var (
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate app(s) from config",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		cfg, err := config.LoadConfig(configPath)
 		if err != nil {
 			log.Fatalf("Failed to load config: %v", err)

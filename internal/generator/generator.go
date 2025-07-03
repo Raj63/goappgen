@@ -1,3 +1,4 @@
+// Package generator provides the logic for generating Go application scaffolding from templates.
 package generator
 
 import (
@@ -102,8 +103,6 @@ func GenerateApp(app config.App, templatesDir, appPath string) error {
 		_ = os.MkdirAll(storageDir, 0700)
 		_ = renderTemplate(app, templatesDir, appPath, "internal/storage/storage.go.tpl")
 	}
-	// Docker Compose
-	//_ = renderTemplateAs(app, templatesDir, appPath, "docker-compose.yml.tpl", "docker-compose.yml")
 
 	return nil
 }
@@ -136,11 +135,9 @@ func defaultFunc(def, val interface{}) interface{} {
 	if val == nil {
 		return def
 	}
-	switch v := val.(type) {
-	case string:
-		if v == "" {
-			return def
-		}
+	v, ok := val.(string)
+	if ok && v == "" {
+		return def
 	}
 	return val
 }

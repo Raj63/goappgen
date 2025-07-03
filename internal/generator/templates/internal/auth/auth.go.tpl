@@ -75,4 +75,4 @@ func Middleware() interface{} {
 	{{- else }}
 	return nil
 	{{- end }}
-} 
+}

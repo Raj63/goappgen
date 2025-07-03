@@ -18,4 +18,4 @@ func InitTracing(ctx context.Context) error {
 	{{- else }}
 	return nil
 	{{- end }}
-} 
+}

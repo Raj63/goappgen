@@ -38,4 +38,4 @@ output/
   make docker-down
   ```
 
-Each app's code is in its own subfolder. See each app's README for details. 
+Each app's code is in its own subfolder. See each app's README for details.

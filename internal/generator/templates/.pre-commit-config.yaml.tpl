@@ -49,6 +49,14 @@ repos:
       #
       - id: go-lint
 
+    # Invoking Custom Go Tools
+  - repo: local
+    hooks:
+      - id: unit tests
+        name: Run unit tests
+        entry: bash -c "make test"
+        language: system
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -58,7 +66,7 @@ repos:
       - id: check-added-large-files
 
   - repo: https://github.com/golangci/golangci-lint
-    rev: v1.54.2
+    rev: v2.2.1
     hooks:
       - id: golangci-lint
 

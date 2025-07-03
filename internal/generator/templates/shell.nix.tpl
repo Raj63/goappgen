@@ -7,6 +7,11 @@ pkgs.mkShell {
     pkgs.golangci-lint
     pkgs.gotools
     pkgs.gopls
+    pkgs.gosec
+    pkgs.gofumpt
+    pkgs.golint
+    pkgs.go-tools
     pkgs.pre-commit
+    pkgs.gitlint
   ];
 }

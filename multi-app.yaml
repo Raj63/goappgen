@@ -73,4 +73,4 @@ app:
       docker_compose: true
       air: true
       makefile: true
-      precommit: true 
+      precommit: true

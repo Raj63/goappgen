@@ -25,4 +25,4 @@ coverage*
 .env.*
 
 # Go
-*.test 
+*.test

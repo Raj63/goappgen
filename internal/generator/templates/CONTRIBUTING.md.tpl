@@ -11,4 +11,4 @@ Thank you for considering contributing to this project!
 ## Code Style
 - Follow Go best practices
 - Use `golangci-lint` for linting
-- Format code with `gofmt` or `goimports` 
+- Format code with `gofmt` or `goimports`

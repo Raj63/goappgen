@@ -19,4 +19,4 @@ func SetupGracefulShutdown(cleanup func()) context.Context {
 		os.Exit(0)
 	}()
 	return ctx
-} 
+}

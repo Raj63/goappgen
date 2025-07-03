@@ -4,4 +4,4 @@ use (
 {{- range .App }}
 	./{{ .Name }}
 {{- end }}
-) 
+)

@@ -1,3 +1,4 @@
+// Package ops provides CLI subcommands for goappgen.
 package ops
 
 import (
@@ -10,7 +11,7 @@ import (
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize a starter config file (sample.yaml)",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		filename := "sample.yaml"
 		if _, err := os.Stat(filename); err == nil {
 			fmt.Printf("%s already exists. Aborting.\n", filename)

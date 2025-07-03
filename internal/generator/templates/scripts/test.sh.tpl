@@ -14,4 +14,4 @@ for app in apps/*; do
       fi
     done
   fi
-done 
+done

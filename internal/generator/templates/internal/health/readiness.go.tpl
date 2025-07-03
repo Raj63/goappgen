@@ -21,4 +21,4 @@ func ReadinessHandler() interface{} {
 	{{- else }}
 	return nil
 	{{- end }}
-} 
+}

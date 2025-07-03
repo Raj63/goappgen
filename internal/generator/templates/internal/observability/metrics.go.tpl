@@ -12,4 +12,4 @@ func InitMetrics() {
 	{{- if eq .Observability.Metrics "prometheus" }}
 	http.Handle("/metrics", promhttp.Handler())
 	{{- end }}
-} 
+}

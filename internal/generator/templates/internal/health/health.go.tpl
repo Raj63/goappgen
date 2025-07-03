@@ -21,4 +21,4 @@ func HealthHandler() interface{} {
 	{{- else }}
 	return nil
 	{{- end }}
-} 
+}
