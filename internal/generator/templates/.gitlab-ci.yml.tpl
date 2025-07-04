@@ -6,20 +6,20 @@ stages:
 
 golangci-lint:
   stage: lint
-  image: golang:1.23
+  image: golang:1.24.4
   script:
     - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
     - golangci-lint run ./...
 
 test:
   stage: test
-  image: golang:1.23
+  image: golang:1.24.4
   script:
     - go test -v ./...
 
 build:
   stage: build
-  image: golang:1.23
+  image: golang:1.24.4
   script:
     - go build ./...
 

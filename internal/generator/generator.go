@@ -4,6 +4,7 @@ package generator
 import (
 	"bytes"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -104,6 +105,15 @@ func GenerateApp(app config.App, templatesDir, appPath string) error {
 		_ = renderTemplate(app, templatesDir, appPath, "internal/storage/storage.go.tpl")
 	}
 
+	// Kubernetes manifests
+	if app.DevTools.Kubernetes {
+		k8sDir := filepath.Join(appPath, "k8s")
+		_ = os.MkdirAll(k8sDir, 0700)
+		_ = renderTemplate(app, templatesDir, k8sDir, "k8s/deployment.yaml.tpl")
+		_ = renderTemplate(app, templatesDir, k8sDir, "k8s/service.yaml.tpl")
+		_ = renderTemplate(app, templatesDir, k8sDir, "k8s/ingress.yaml.tpl")
+	}
+
 	return nil
 }
 
@@ -162,6 +172,7 @@ func renderTemplate(app config.App, templatesDir, appPath, tplName string) error
 		"Title":     titleFunc,
 		"default":   defaultFunc,
 		"add":       func(a, b int) int { return a + b },
+		"join":      strings.Join,
 	}
 
 	tpl, err := template.New(filepath.Base(tplName)).Funcs(funcs).Parse(string(tplData))
@@ -203,7 +214,7 @@ var perAppTemplates = map[string]struct{}{
 	"internal/storage/storage.go.tpl":       {},
 }
 
-// RenderRootTemplates recursively renders all root-level templates (excluding per-app templates) to the output root.
+// RenderRootTemplates recursively renders all root-level templates (excluding per-app templates and k8s templates) to the output root.
 func RenderRootTemplates(data interface{}, templatesDir, outputBase string) error {
 	return filepath.Walk(templatesDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -220,8 +231,8 @@ func RenderRootTemplates(data interface{}, templatesDir, outputBase string) erro
 		if err != nil {
 			return err
 		}
-		// Exclude per-app templates
-		if _, ok := perAppTemplates[relPath]; ok {
+		// Exclude per-app templates and k8s templates
+		if _, ok := perAppTemplates[relPath]; ok || strings.HasPrefix(relPath, "k8s/") {
 			return nil
 		}
 		// Output path: strip .tpl, preserve subdirs
@@ -244,6 +255,7 @@ func RenderRootTemplates(data interface{}, templatesDir, outputBase string) erro
 			"Title":     titleFunc,
 			"default":   defaultFunc,
 			"add":       func(a, b int) int { return a + b },
+			"join":      strings.Join,
 		}
 		tpl, err := template.New(info.Name()).Funcs(funcs).Parse(string(tplData))
 		if err != nil {
@@ -257,37 +269,49 @@ func RenderRootTemplates(data interface{}, templatesDir, outputBase string) erro
 	})
 }
 
-// GenerateAll generates the full project structure (single-app or multi-app) based on the provided AppConfig.
-// It renders all root-level templates and per-app directories as needed.
+// GenerateAll generates the full project structure (always multi-app style) based on the provided AppConfig.
 func GenerateAll(appConfig config.AppConfig, templatesDir, outputBase string) error {
 	// Ensure output directory exists
 	if err := os.MkdirAll(outputBase, 0750); err != nil {
 		return err
 	}
-	if len(appConfig.App) > 1 {
-		// Multi-app: render all root-level templates
-		if err := RenderRootTemplates(appConfig, templatesDir, outputBase); err != nil {
+	// Render all root-level templates
+	if err := RenderRootTemplates(appConfig, templatesDir, outputBase); err != nil {
+		return err
+	}
+	// Generate each app in apps/<appname>
+	for _, app := range appConfig.App {
+		appPath := filepath.Join(outputBase, "apps", app.Name)
+		if err := GenerateApp(app, templatesDir, appPath); err != nil {
 			return err
 		}
-		// Generate each app as before
-		for _, app := range appConfig.App {
-			appPath := filepath.Join(outputBase, "apps", app.Name)
-			if err := GenerateApp(app, templatesDir, appPath); err != nil {
-				return err
-			}
+		// Kubernetes manifests for each app: output to k8s/<appname>/
+		if app.DevTools.Kubernetes {
+			k8sDir := filepath.Join(outputBase, "k8s", app.Name)
+			_ = os.MkdirAll(k8sDir, 0700)
+			_ = renderTemplate(app, templatesDir, k8sDir, "k8s/deployment.yaml.tpl")
+			_ = renderTemplate(app, templatesDir, k8sDir, "k8s/service.yaml.tpl")
+			_ = renderTemplate(app, templatesDir, k8sDir, "k8s/ingress.yaml.tpl")
 		}
+	}
+	return nil
+}
+
+// GenerateAllWithPostGen wraps GenerateAll and optionally runs Go workspace commands after generation.
+func GenerateAllWithPostGen(appConfig config.AppConfig, templatesDir, outputBase string, syncGoMod bool) error {
+	if err := GenerateAll(appConfig, templatesDir, outputBase); err != nil {
+		return err
+	}
+	if !syncGoMod {
 		return nil
 	}
-	// Single app: render all root-level templates at the app root, but always pass AppConfig as context
-	app := appConfig.App[0]
-	appRoot := filepath.Join(outputBase, "app", app.Name)
-	if err := os.MkdirAll(appRoot, 0750); err != nil {
+	// Always run go work sync in the output root
+	cmd := exec.Command("go", "work", "sync")
+	cmd.Dir = outputBase
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
 		return err
 	}
-	// Wrap single app in AppConfig for template context
-	singleAppConfig := config.AppConfig{App: []config.App{app}}
-	if err := RenderRootTemplates(singleAppConfig, templatesDir, appRoot); err != nil {
-		return err
-	}
-	return GenerateApp(app, templatesDir, appRoot)
+	return nil
 }

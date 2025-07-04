@@ -36,64 +36,69 @@ services:
 
 # Shared services
 {{- if eq .Database.Type "postgres" }}
-db:
-  image: postgres:15
-  restart: always
-  environment:
-    POSTGRES_USER: user
-    POSTGRES_PASSWORD: pass
-    POSTGRES_DB: dbname
-  ports:
-    - "5432:5432"
-  volumes:
-    - pgdata:/var/lib/postgresql/data
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: pass
+        POSTGRES_DB: dbname
+    ports:
+        - "5432:5432"
+    volumes:
+        - pgdata:/var/lib/postgresql/data
+
 {{- else if or (eq .Database.Type "mysql") (eq .Database.Type "mariadb") }}
-db:
-  image: mysql:8
-  restart: always
-  environment:
-    MYSQL_ROOT_PASSWORD: pass
-    MYSQL_DATABASE: dbname
-    MYSQL_USER: user
-    MYSQL_PASSWORD: pass
-  ports:
-    - "3306:3306"
-  volumes:
-    - mysqldata:/var/lib/mysql
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: pass
+        MYSQL_DATABASE: dbname
+        MYSQL_USER: user
+        MYSQL_PASSWORD: pass
+    ports:
+        - "3306:3306"
+    volumes:
+        - mysqldata:/var/lib/mysql
+
 {{- else if eq .Database.Type "mongo" }}
-mongo:
-  image: mongo:6
-  restart: always
-  environment:
-    MONGO_INITDB_ROOT_USERNAME: user
-    MONGO_INITDB_ROOT_PASSWORD: pass
-  ports:
-    - "27017:27017"
-  volumes:
-    - mongodata:/data/db
+  mongo:
+    image: mongo:6
+    restart: always
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: user
+        MONGO_INITDB_ROOT_PASSWORD: pass
+    ports:
+        - "27017:27017"
+    volumes:
+        - mongodata:/data/db
+
 {{- end }}
 
 {{- if eq .Observability.Metrics "prometheus" }}
-prometheus:
-  image: prom/prometheus:latest
-  volumes:
-    - ./prometheus.yml:/etc/prometheus/prometheus.yml
-  ports:
-    - "9091:9090"
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+        - "9091:9090"
+
 {{- end }}
 
 {{- if or (eq .Storage.Type "s3") (eq .Storage.Type "minio") }}
-minio:
-  image: minio/minio:latest
-  environment:
-    MINIO_ROOT_USER: {{ default "minio" .Storage.AccessKey }}
-    MINIO_ROOT_PASSWORD: {{ default "minio123" .Storage.SecretKey }}
-  command: server /data
-  ports:
-    - "9000:9000"
-    - "9001:9001"
-  volumes:
-    - miniodata:/data
+  minio:
+    image: minio/minio:latest
+    environment:
+        MINIO_ROOT_USER: {{ default "minio" .Storage.AccessKey }}
+        MINIO_ROOT_PASSWORD: {{ default "minio123" .Storage.SecretKey }}
+    command: server /data
+    ports:
+        - "9000:9000"
+        - "9001:9001"
+    volumes:
+        - miniodata:/data
+
 {{- end }}
 
 volumes:

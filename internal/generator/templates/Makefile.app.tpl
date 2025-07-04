@@ -20,3 +20,8 @@ fmt:
 
 modtidy:
 	go mod tidy
+
+{{- if .DevTools.Swagger }}
+swagger:
+	swag init --parseDependency --parseInternal --output ./docs
+{{- end }}

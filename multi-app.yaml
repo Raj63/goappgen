@@ -1,29 +1,34 @@
+# To generate your monorepo, run:
+#   goappgen generate -c multi-app.yaml -o ./output --sync-go-mod
+# All generated apps will be in output/apps/<appname>/.
+# The --sync-go-mod flag will run 'go work sync' after generation to update the Go workspace.
+
 app:
   - name: inventory-service
     desc: Inventory microservice
     transport:
-      http: gin
+      http: echo
       grpc: true
     logger:
-      type: slog
-      output: std
+      type: zap
+      output: file
     config:
-      type: viper
+      type: envconfig
     cli:
       cobra: true
     auth:
-      type: jwt
+      type: casbin
     database:
-      type: postgres
+      type: mysql
       orm: gorm
       cqrs: true
       migrations: true
     storage:
-      type: s3
+      type: minio
       endpoint: http://minio:9000
       access_key: minio
       secret_key: minio123
-      bucket: inventory
+      bucket: billing
       region: us-east-1
       use_ssl: false
     observability:
@@ -31,11 +36,28 @@ app:
       tracing: otel
       logs: loki
     devtools:
+      kubernetes: true        # Enable only Kubernetes manifests for this app
+      docker_compose: false
       docker: true
-      docker_compose: true
       air: true
       makefile: true
       precommit: true
+    middlewares:
+      cors:
+        enabled: true
+        allow_origins: ["https://example.com"]
+        allow_methods: ["GET", "POST"]
+        allow_headers: ["Authorization"]
+      ratelimiter:
+        enabled: true
+        requests_per_second: 5
+        burst: 10
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      options:
+        enabled: true
 
   - name: billing-service
     desc: Billing and payments microservice
@@ -69,8 +91,133 @@ app:
       tracing: jaeger
       logs: loki
     devtools:
-      docker: true
+      kubernetes: true        # Enable both Kubernetes and Docker Compose for this app
       docker_compose: true
+      docker: true
       air: true
       makefile: true
       precommit: true
+    middlewares:
+      cors:
+        enabled: true
+        allow_origins: ["https://example.com"]
+        allow_methods: ["GET", "POST"]
+        allow_headers: ["Authorization"]
+      ratelimiter:
+        enabled: true
+        requests_per_second: 5
+        burst: 10
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      options:
+        enabled: true
+
+  - name: grpc-service
+    description: Example gRPC microservice
+    transport:
+      http: chi
+      grpc: true
+    logger:
+      type: zap
+      output: file
+    config:
+      type: envconfig
+    cli:
+      cobra: true
+    auth:
+      type: casbin
+    database:
+      type: mysql
+      orm: gorm
+      cqrs: true
+      migrations: true
+    storage:
+      type: minio
+      endpoint: http://minio:9000
+      access_key: minio
+      secret_key: minio123
+      bucket: billing
+      region: us-east-1
+      use_ssl: false
+    observability:
+      metrics: prometheus
+      tracing: otel
+      logs: loki
+    devtools:
+      kubernetes: true
+      docker_compose: true
+      docker: true
+      air: false
+      makefile: true
+      precommit: false
+      swagger: true        # Enable Swagger/Swaggo docs
+    middlewares:
+      logging:
+        enabled: true
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      ratelimiter:
+        enabled: true
+        requests_per_second: 10
+        burst: 20
+      tracing:
+        enabled: true
+      request_id:
+        enabled: true
+
+  - name: user-service
+    description: User management microservice
+    transport:
+      http: chi
+      grpc: false
+    logger:
+      type: zap
+      output: file
+    config:
+      type: envconfig
+    cli:
+      cobra: true
+    auth:
+      type: casbin
+    database:
+      type: mysql
+      orm: gorm
+      cqrs: true
+      migrations: true
+    storage:
+      type: minio
+      endpoint: http://minio:9000
+      access_key: minio
+      secret_key: minio123
+      bucket: billing
+      region: us-east-1
+      use_ssl: false
+    observability:
+      metrics: prometheus
+      tracing: otel
+      logs: loki
+    devtools:
+      kubernetes: true
+      docker_compose: true
+      docker: true
+      air: false
+      makefile: true
+      precommit: false
+      swagger: true        # Enable Swagger/Swaggo docs
+    middlewares:
+      logging:
+        enabled: false
+      cors:
+        enabled: false
+      ratelimiter:
+        enabled: false
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      options:
+        enabled: true

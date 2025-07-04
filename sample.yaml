@@ -1,11 +1,15 @@
 # Example goappgen config with all possible features and options
+# To generate your app(s), run:
+#   goappgen generate -c sample.yaml -o ./output --sync-go-mod
+# All generated apps will be in output/apps/<appname>/, even for a single app.
+# The --sync-go-mod flag will run 'go mod download && go mod tidy' (single-app) or 'go work sync' (multi-app) after generation.
 app:
   - name: inventory-service
     desc: Inventory microservice
     # --- Transport Layer ---
     transport:
       http: gin         # Options: gin, echo, chi, fiber
-      grpc: true        # Enable gRPC server (true/false)
+      grpc: false        # Enable gRPC server (true/false)
     # --- Logger ---
     logger:
       type: slog        # Options: slog, zap, zerolog, logrus
@@ -39,10 +43,31 @@ app:
       metrics: prometheus   # Options: prometheus, none
       tracing: otel         # Options: otel, jaeger, none
       logs: loki            # Options: loki, none
+    # --- Middlewares ---
+    middlewares:
+      logging:
+        enabled: true
+      cors:
+        enabled: true
+        allow_origins: ["*"]
+        allow_methods: ["GET", "POST", "PUT", "DELETE"]
+        allow_headers: ["Authorization", "Content-Type"]
+      ratelimiter:
+        enabled: true
+        requests_per_second: 10
+        burst: 20
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      options:
+        enabled: true
     # --- Dev Tools ---
     devtools:
-      docker: true          # Include Dockerfile (true/false)
-      docker_compose: true  # Include docker-compose (true/false)
-      air: true             # Include Air live reload config (true/false)
-      makefile: true        # Include Makefile (true/false)
-      precommit: true       # Include pre-commit hooks (true/false)
+      kubernetes: true        # Enable Kubernetes manifests
+      docker_compose: false   # Set to true to generate both k8s and docker-compose
+      docker: true             # Include Dockerfile (true/false)
+      air: true                # Include Air live reload config (true/false)
+      makefile: true           # Include Makefile (true/false)
+      precommit: true          # Include pre-commit hooks (true/false)
+      swagger: true            # Enable Swagger/Swaggo docs

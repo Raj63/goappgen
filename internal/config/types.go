@@ -18,6 +18,7 @@ type App struct {
 	Observability Observability `yaml:"observability,omitempty" json:"observability,omitempty"` // prometheus/otel
 	DevTools      DevTools      `yaml:"devtools" json:"devtools"`                               // docker, air, makefile, precommit, etc.
 	Storage       Storage       `yaml:"storage" json:"storage"`                                 // S3/MinIO storage
+	Middlewares   Middlewares   `yaml:"middlewares" json:"middlewares"`
 }
 
 // Transport defines the transport layer configuration (HTTP/GRPC) for the app.
@@ -64,11 +65,13 @@ type Observability struct {
 
 // DevTools specifies which development tools should be included in the generated app.
 type DevTools struct {
-	Docker         bool `yaml:"docker" json:"docker"`
-	DockerCompose  bool `yaml:"docker_compose" json:"docker_compose"`
-	Air            bool `yaml:"air" json:"air"`
-	Makefile       bool `yaml:"makefile" json:"makefile"`
-	PreCommitHooks bool `yaml:"precommit" json:"precommit"`
+	Docker        bool `yaml:"docker" json:"docker"`
+	DockerCompose bool `yaml:"docker_compose" json:"docker_compose"`
+	Air           bool `yaml:"air" json:"air"`
+	Makefile      bool `yaml:"makefile" json:"makefile"`
+	Precommit     bool `yaml:"precommit" json:"precommit"`
+	Kubernetes    bool `yaml:"kubernetes" json:"kubernetes"`
+	Swagger       bool `yaml:"swagger" json:"swagger"` // Enable Swagger/Swaggo docs
 }
 
 // Storage defines the S3-compatible storage configuration for the app.
@@ -80,4 +83,61 @@ type Storage struct {
 	Bucket    string `yaml:"bucket" json:"bucket"`
 	Region    string `yaml:"region" json:"region"`
 	UseSSL    bool   `yaml:"use_ssl" json:"use_ssl"`
+}
+
+// CORSConfig holds configuration for CORS middleware.
+type CORSConfig struct {
+	Enabled      bool     `yaml:"enabled" json:"enabled"`
+	AllowOrigins []string `yaml:"allow_origins" json:"allow_origins"`
+	AllowMethods []string `yaml:"allow_methods" json:"allow_methods"`
+	AllowHeaders []string `yaml:"allow_headers" json:"allow_headers"`
+}
+
+// RateLimiterConfig holds configuration for rate limiting middleware.
+type RateLimiterConfig struct {
+	Enabled           bool `yaml:"enabled" json:"enabled"`
+	RequestsPerSecond int  `yaml:"requests_per_second" json:"requests_per_second"`
+	Burst             int  `yaml:"burst" json:"burst"`
+}
+
+// ExceptionHandlerConfig holds configuration for exception handler middleware.
+type ExceptionHandlerConfig struct {
+	Enabled bool `yaml:"enabled" json:"enabled"`
+}
+
+// RecordMetricsConfig holds configuration for metrics middleware.
+type RecordMetricsConfig struct {
+	Enabled bool `yaml:"enabled" json:"enabled"`
+}
+
+// OptionsConfig holds configuration for automatic OPTIONS handler middleware.
+type OptionsConfig struct {
+	Enabled bool `yaml:"enabled" json:"enabled"`
+}
+
+// LoggingConfig holds configuration for logging middleware.
+type LoggingConfig struct {
+	Enabled bool `yaml:"enabled" json:"enabled"`
+}
+
+// Middlewares aggregates all middleware configuration for an app.
+type Middlewares struct {
+	CORS             CORSConfig             `yaml:"cors" json:"cors"`
+	RateLimiter      RateLimiterConfig      `yaml:"ratelimiter" json:"ratelimiter"`
+	ExceptionHandler ExceptionHandlerConfig `yaml:"exception_handler" json:"exception_handler"`
+	RecordMetrics    RecordMetricsConfig    `yaml:"record_metrics" json:"record_metrics"`
+	Options          OptionsConfig          `yaml:"options" json:"options"`
+	Logging          LoggingConfig          `yaml:"logging" json:"logging"`
+	Tracing          TracingConfig          `yaml:"tracing" json:"tracing"`
+	RequestID        RequestIDConfig        `yaml:"request_id" json:"request_id"`
+}
+
+// TracingConfig holds configuration for tracing middleware.
+type TracingConfig struct {
+	Enabled bool `yaml:"enabled" json:"enabled"`
+}
+
+// RequestIDConfig holds configuration for request ID middleware.
+type RequestIDConfig struct {
+	Enabled bool `yaml:"enabled" json:"enabled"`
 }

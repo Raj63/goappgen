@@ -3,7 +3,7 @@
 pkgs.mkShell {
   buildInputs = [
     pkgs.git
-    pkgs.go_1_23
+    pkgs.go_1_24
     pkgs.golangci-lint
     pkgs.gotools
     pkgs.gopls
