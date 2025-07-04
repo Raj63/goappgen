@@ -15,13 +15,11 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.23
-      - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint@v2.1.6
+      - name: Install golangci-lint v2
+        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.2.1
       - name: Lint
         run: golangci-lint run ./...
       - name: Build
         run: go build ./...
       - name: Test
         run: go test -v ./...
-      - name: Docker Build
-        run: docker build .
