@@ -19,6 +19,12 @@ run-single: build ## Run the binary in single app mode
 run-multi: build ## Run the binary in multi app mode
 	$(BUILD_DIR)/$(APP_NAME) generate --config multi-app.yaml --out ./output/multi-app --sync-go-mod
 
+dry-run: build ## Preview file structure without generating files
+	$(BUILD_DIR)/$(APP_NAME) generate --config sample.yaml --out ./output/dry-run --dry-run
+
+dry-run-multi: build ## Preview multi-app file structure without generating files
+	$(BUILD_DIR)/$(APP_NAME) generate --config multi-app.yaml --out ./output/dry-run-multi --dry-run
+
 .PHONY: test ## Run tests
 test:
 	go test -race -cover -coverprofile=coverage.txt -covermode=atomic ./...

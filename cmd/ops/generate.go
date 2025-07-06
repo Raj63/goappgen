@@ -15,6 +15,7 @@ var (
 	outputPath   string
 	templatesDir string
 	syncGoMod    bool
+	dryRun       bool
 )
 
 var generateCmd = &cobra.Command{
@@ -26,11 +27,15 @@ var generateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Error loading config: %v", err)
 		}
-		err = generator.GenerateAllWithPostGen(*cfg, templatesDir, outputPath, syncGoMod)
+		err = generator.GenerateAllWithPostGen(*cfg, templatesDir, outputPath, syncGoMod, dryRun)
 		if err != nil {
 			log.Fatalf("Error generating apps: %v", err)
 		}
-		fmt.Println("Generation complete.")
+		if dryRun {
+			fmt.Println("Dry run completed. No files were created.")
+		} else {
+			fmt.Println("Generation complete.")
+		}
 	},
 }
 
@@ -42,4 +47,5 @@ func init() {
 	generateCmd.Flags().StringVarP(&outputPath, "out", "o", "./output", "Output directory")
 	generateCmd.Flags().StringVar(&templatesDir, "templates", "internal/generator/templates", "Templates directory")
 	generateCmd.Flags().BoolVar(&syncGoMod, "sync-go-mod", false, "After generation, run 'go mod download && go mod tidy' (single-app) or 'go work sync' (multi-app) in the output directory.")
+	generateCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Print file structure that would be generated without creating files.")
 }

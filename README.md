@@ -229,7 +229,8 @@ app:
 
 ### CLI Flags
 
-- `--sync-go-mod` (optional): After generation, run `go mod download && go mod tidy` (single-app) or `go work sync` (multi-app) in the output directory. This ensures dependencies are downloaded and the Go module/workspace is up to date. Recommended for most use cases.
+- `--sync-go-mod` (optional): After generation, run `go work sync` in the output directory. This ensures dependencies are downloaded and the Go workspace is up to date. Recommended for most use cases.
+- `--dry-run` (optional): Print the file structure that would be generated without creating any files. Useful for previewing what the generator will create.
 
 ## Output Structure
 
