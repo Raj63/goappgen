@@ -48,3 +48,15 @@ output/
   ```
 
 Each app's code is in its own subfolder under `apps/`. See each app's README for details.
+
+## Initialize All App Dependencies
+
+To install all Go dependencies for every app and sync the workspace, run:
+
+```sh
+make init
+```
+
+This will:
+- Run `go mod download` and `go mod tidy` in every app under `apps/`
+- Run `go work sync` at the root to update the workspace

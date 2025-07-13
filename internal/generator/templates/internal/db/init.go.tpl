@@ -34,18 +34,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	{{- end }}
-	// --- Migrations ---
-	{{- if .Database.Migrations }}
-	"github.com/golang-migrate/migrate/v4"
-	{{- if eq .Database.Type "postgres" }}
-	"github.com/golang-migrate/migrate/v4/database/postgres"
-	{{- else if or (eq .Database.Type "mysql") (eq .Database.Type "mariadb") }}
-	"github.com/golang-migrate/migrate/v4/database/mysql"
-	{{- else if eq .Database.Type "sqlite" }}
-	"github.com/golang-migrate/migrate/v4/database/sqlite3"
-	{{- end }}
-	"github.com/golang-migrate/migrate/v4/source/file"
-	{{- end }}
 )
 
 // InitDB initializes the database connection and runs migrations if enabled.
@@ -68,13 +56,9 @@ func InitDB(ctx context.Context) (interface{}, error) {
 		return nil, err
 	}
 	{{- if .Database.Migrations }}
-	// Run migrations using golang-migrate
-	m, err := migrate.New(
-		"file://migrations",
-		dsn,
-	)
-	if err == nil {
-		_ = m.Up()
+	// Run migrations using modular approach
+	if err := RunMigrations(dsn); err != nil {
+		return nil, err
 	}
 	{{- end }}
 	return db, nil
@@ -86,12 +70,9 @@ func InitDB(ctx context.Context) (interface{}, error) {
 		return nil, err
 	}
 	{{- if .Database.Migrations }}
-	m, err := migrate.New(
-		"file://migrations",
-		dsn,
-	)
-	if err == nil {
-		_ = m.Up()
+	// Run migrations using modular approach
+	if err := RunMigrations(dsn); err != nil {
+		return nil, err
 	}
 	{{- end }}
 	return conn, nil
@@ -102,6 +83,12 @@ func InitDB(ctx context.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	{{- if .Database.Migrations }}
+	// Run migrations using modular approach
+	if err := RunMigrations(dsn); err != nil {
+		return nil, err
+	}
+	{{- end }}
 	return db, nil
 	// --- MongoDB ---
 	{{- else if eq .Database.Type "mongo" }}

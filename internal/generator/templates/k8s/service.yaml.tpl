@@ -14,7 +14,7 @@ spec:
       port: 9090
       targetPort: 9090
     {{- end }}
-    {{- if eq .Observability.Metrics "prometheus" }}
+    {{- if eq .Observability.Metrics.Type "prometheus" }}
     - protocol: TCP
       port: 2112
       targetPort: 2112

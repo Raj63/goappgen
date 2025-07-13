@@ -30,5 +30,11 @@ fmt:
 modtidy:
 	go mod tidy
 
+init:
+{{- range .App }}
+	cd apps/{{ .Name }} && go mod download && go mod tidy;
+{{- end }}
+	go work sync
+
 local-ci:
 	act -P ubuntu-latest=catthehacker/ubuntu:act-latest -W .github/workflows/ci.yml --container-architecture linux/amd64

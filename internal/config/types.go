@@ -58,9 +58,21 @@ type Database struct {
 
 // Observability defines observability options like metrics, tracing, and logs for the app.
 type Observability struct {
-	Metrics string `yaml:"metrics" json:"metrics"` // prometheus/none
-	Tracing string `yaml:"tracing" json:"tracing"` // otel/jaeger/none
-	Logs    string `yaml:"logs" json:"logs"`       // loki/none
+	Metrics Metrics `yaml:"metrics" json:"metrics"`
+	Tracing Tracing `yaml:"tracing" json:"tracing"`
+	Logs    string  `yaml:"logs" json:"logs"` // loki/none
+}
+
+// Metrics holds configuration for metrics collection.
+type Metrics struct {
+	Enabled bool   `yaml:"enabled" json:"enabled"`
+	Type    string `yaml:"type" json:"type"` // prometheus/none
+}
+
+// Tracing holds configuration for distributed tracing.
+type Tracing struct {
+	Enabled bool   `yaml:"enabled" json:"enabled"`
+	Type    string `yaml:"type" json:"type"` // otel/jaeger/none
 }
 
 // DevTools specifies which development tools should be included in the generated app.

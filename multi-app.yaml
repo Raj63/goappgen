@@ -32,8 +32,12 @@ app:
       region: us-east-1
       use_ssl: false
     observability:
-      metrics: prometheus
-      tracing: otel
+      metrics:
+        enabled: true
+        type: prometheus   # Options: prometheus, none
+      tracing:
+        enabled: true
+        type: otel         # Options: otel, jaeger, none
       logs: loki
     devtools:
       kubernetes: true        # Enable only Kubernetes manifests for this app
@@ -87,8 +91,12 @@ app:
       region: us-east-1
       use_ssl: false
     observability:
-      metrics: prometheus
-      tracing: jaeger
+      metrics:
+        enabled: true
+        type: prometheus   # Options: prometheus, none
+      tracing:
+        enabled: true
+        type: otel         # Options: otel, jaeger, none
       logs: loki
     devtools:
       kubernetes: true        # Enable both Kubernetes and Docker Compose for this app
@@ -142,8 +150,12 @@ app:
       region: us-east-1
       use_ssl: false
     observability:
-      metrics: prometheus
-      tracing: otel
+      metrics:
+        enabled: true
+        type: prometheus   # Options: prometheus, none
+      tracing:
+        enabled: true
+        type: otel         # Options: otel, jaeger, none
       logs: loki
     devtools:
       kubernetes: true
@@ -197,8 +209,12 @@ app:
       region: us-east-1
       use_ssl: false
     observability:
-      metrics: prometheus
-      tracing: otel
+      metrics:
+        enabled: false
+        type: none   # Options: prometheus, none
+      tracing:
+        enabled: true
+        type: otel         # Options: otel, jaeger, none
       logs: loki
     devtools:
       kubernetes: true

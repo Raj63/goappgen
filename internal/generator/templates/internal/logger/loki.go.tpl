@@ -10,10 +10,12 @@ import (
 	{{- else if eq .Logger.Type "zerolog" }}
 	"github.com/rs/zerolog"
 	"github.com/grafana/loki-client-go/lokizerolog"
-	{{- end }}
+	{{- else if eq .Logger.Type "slog" }}
+    "log/slog"
+    {{- end }}
 )
 
-// InitLokiLogger adds a Loki hook to the logger if enabled.
+// InitLokiLogger adds a Loki hook to the logger if enabled and returns the logger instance.
 func InitLokiLogger(logger interface{}) interface{} {
 	{{- if eq .Logger.Type "logrus" }}
 	if l, ok := logger.(*logrus.Logger); ok {
@@ -32,6 +34,11 @@ func InitLokiLogger(logger interface{}) interface{} {
 		return l
 	}
 	return logger
+    {{- else if eq .Logger.Type "slog" }}
+    if l, ok := logger.(slog.Logger); ok {
+		l = l.Hook(lokizerolog.NewHook("http://localhost:3100/loki/api/v1/push", "goappgen"))
+		return l
+	}
 	{{- else }}
 	return logger
 	{{- end }}

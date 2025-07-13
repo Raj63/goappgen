@@ -22,7 +22,7 @@ services:
       {{- else if eq .Database.Type "mongo" }}
       - mongo
       {{- end }}
-      {{- if eq .Observability.Metrics "prometheus" }}
+      {{- if eq .Observability.Metrics.Type "prometheus" }}
       - prometheus
       {{- end }}
       {{- if or (eq .Storage.Type "s3") (eq .Storage.Type "minio") }}
@@ -76,7 +76,7 @@ services:
 
 {{- end }}
 
-{{- if eq .Observability.Metrics "prometheus" }}
+{{- if eq .Observability.Metrics.Type "prometheus" }}
   prometheus:
     image: prom/prometheus:latest
     volumes:

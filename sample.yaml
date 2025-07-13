@@ -40,8 +40,12 @@ app:
       use_ssl: false        # Use SSL (true/false)
     # --- Observability ---
     observability:
-      metrics: prometheus   # Options: prometheus, none
-      tracing: otel         # Options: otel, jaeger, none
+      metrics:
+        enabled: true
+        type: prometheus   # Options: prometheus, none
+      tracing:
+        enabled: true
+        type: otel         # Options: otel, jaeger, none
       logs: loki            # Options: loki, none
     # --- Middlewares ---
     middlewares:

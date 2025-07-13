@@ -22,7 +22,7 @@ spec:
             {{- if .Transport.GRPC }}
             - containerPort: 9090
             {{- end }}
-            {{- if eq .Observability.Metrics "prometheus" }}
+            {{- if eq .Observability.Metrics.Type "prometheus" }}
             - containerPort: 2112
             {{- end }}
           env:

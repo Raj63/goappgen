@@ -8,6 +8,7 @@ import (
 	{{- end }}
 )
 
+// Config holds application configuration values.
 type Config struct {
 	// HTTP server port
 	HTTPPort string `mapstructure:"http_port" env:"HTTP_PORT"`
