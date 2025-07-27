@@ -9,14 +9,7 @@ import (
 	"time"
 
 	// Logger imports
-	{{ include "slog_imports.go.tpl" }}
-	{{ include "zap_imports.go.tpl" }}
-	{{ include "zerolog_imports.go.tpl" }}
-	{{ include "logrus_imports.go.tpl" }}
-
-    {{- if eq .Observability.Logs "loki"}}
-        lokilogger "{{ .Name }}/internal/logger"
-    {{- end }}
+    logger "{{ .Name }}/internal/logger"
 
 	// Config imports
 	{{ include "config_imports.go.tpl" }}
@@ -51,15 +44,7 @@ func main() {
 	})
 
 	// Logger setup
-	{{ include "slog_code.go.tpl" }}
-	{{ include "zap_code.go.tpl" }}
-	{{ include "zerolog_code.go.tpl" }}
-	{{ include "logrus_code.go.tpl" }}
-
-    // Hook loki if enabled
-    {{- if eq .Observability.Logs "loki"}}
-       logger = lokilogger.InitLokiLogger(logger)
-    {{- end }}
+    logger = logger.InitializeLogger()
 
 	// Config setup
 	{{ include "config_code.go.tpl" }}

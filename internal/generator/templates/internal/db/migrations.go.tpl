@@ -68,7 +68,7 @@ func CreateMigrationsDir() error {
 --     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- );
 `
-	if err := os.WriteFile(upFile, []byte(upContent), 0644); err != nil {
+	if err := os.WriteFile(upFile, []byte(upContent), 0600); err != nil {
 		return fmt.Errorf("failed to create up migration file: %w", err)
 	}
 
@@ -78,7 +78,7 @@ func CreateMigrationsDir() error {
 -- Example:
 -- DROP TABLE IF EXISTS users;
 `
-	if err := os.WriteFile(downFile, []byte(downContent), 0644); err != nil {
+	if err := os.WriteFile(downFile, []byte(downContent), 0600); err != nil {
 		return fmt.Errorf("failed to create down migration file: %w", err)
 	}
 	{{- end }}

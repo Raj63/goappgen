@@ -17,7 +17,7 @@ run-single: build ## Run the binary in single app mode
 	$(BUILD_DIR)/$(APP_NAME) generate --config sample.yaml --out ./output/single-app --sync-go-mod
 
 run-multi: build ## Run the binary in multi app mode
-	$(BUILD_DIR)/$(APP_NAME) generate --config multi-app.yaml --out ./output/multi-app --sync-go-mod
+	$(BUILD_DIR)/$(APP_NAME) generate --config multi-app-full.yaml --out ./output/multi-app
 
 dry-run: build ## Preview file structure without generating files
 	$(BUILD_DIR)/$(APP_NAME) generate --config sample.yaml --out ./output/dry-run --dry-run

@@ -2,6 +2,8 @@ module github.com/Raj63/goappgen
 
 go 1.23.0
 
+toolchain go1.23.10
+
 require (
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/text v0.26.0

@@ -12,7 +12,7 @@ app:
       grpc: false        # Enable gRPC server (true/false)
     # --- Logger ---
     logger:
-      type: slog        # Options: slog, zap, zerolog, logrus
+      type: logrus        # Options: slog, zap, zerolog(default), logrus
       output: std       # Options: std, file, both
     # --- Config Provider ---
     config:

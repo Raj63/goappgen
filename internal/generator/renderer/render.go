@@ -16,11 +16,11 @@ import (
 )
 
 // RenderTemplate renders a template for the given app using the embedded filesystem.
-func RenderTemplate(app config.App, templatesFS embed.FS, appPath, tplName string) error {
+func RenderTemplate(app config.App, templatesFS embed.FS, targetPath, tplName string) error {
 	// Use embedded templates
 	embedPath := filepath.Join("templates", tplName)
-	if strings.HasPrefix(tplName, "internal/plugin/") {
-		embedPath = strings.TrimPrefix(tplName, "internal/")
+	if strings.HasPrefix(tplName, "plugin/") {
+		embedPath = tplName
 	}
 	tplData, err := templatesFS.ReadFile(embedPath)
 	if err != nil {
@@ -50,8 +50,11 @@ func RenderTemplate(app config.App, templatesFS embed.FS, appPath, tplName strin
 	if strings.HasPrefix(tplName, "k8s") {
 		tplName = filepath.Base(tplName)
 	}
+	if strings.HasPrefix(tplName, "plugin/") {
+		tplName = filepath.Base(tplName)
+	}
 
-	output := filepath.Join(appPath, tplName[:len(tplName)-4])
+	output := filepath.Join(targetPath, tplName[:len(tplName)-4])
 	if err := os.MkdirAll(filepath.Dir(output), 0750); err != nil {
 		return err
 	}

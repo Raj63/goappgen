@@ -1,0 +1,177 @@
+app:
+  - name: ginapp
+    http:
+      framework: gin
+      port: 8081
+    logger:
+      type: zap
+    config:
+      type: yaml
+    database:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: ginuser
+      password: secret
+      dbname: gindb
+      migrations: true
+    auth:
+      type: jwt
+    storage:
+      type: s3
+    middlewares:
+      logging:
+        enabled: true
+      cors:
+        enabled: true
+        allow_origins: ["*"]
+        allow_methods: ["GET", "POST", "PUT", "DELETE"]
+        allow_headers: ["Authorization", "Content-Type"]
+      ratelimiter:
+        enabled: true
+        requests_per_second: 10
+        burst: 20
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      options:
+        enabled: true
+    devTools:
+      kubernetes: true
+      swagger: true
+      air: true
+      docker: true
+    plugins:
+      - metrics
+      - tracing
+      - casbin
+
+  - name: echoapp
+    http:
+      framework: echo
+      port: 8082
+    logger:
+      type: zerolog
+    config:
+      type: yaml
+    database:
+      type: mysql
+      host: 127.0.0.1
+      port: 3306
+      user: echouser
+      password: secret
+      dbname: echodb
+      migrations: false
+    auth:
+      type: jwt
+    storage:
+      type: minio
+    middlewares:
+      logging:
+        enabled: true
+      cors:
+        enabled: true
+        allow_origins: ["*"]
+        allow_methods: ["GET", "POST", "PUT", "DELETE"]
+        allow_headers: ["Authorization", "Content-Type"]
+      ratelimiter:
+        enabled: true
+        requests_per_second: 10
+        burst: 20
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      options:
+        enabled: true
+    devTools:
+      kubernetes: false
+      swagger: true
+      air: false
+      docker: true
+    plugins:
+      - metrics
+
+  - name: chiapp
+    http:
+      framework: chi
+      port: 8083
+    logger:
+      type: logrus
+    config:
+      type: yaml
+    database:
+      type: sqlite
+      file: /tmp/chiapp.db
+      migrations: true
+    auth:
+      type: none
+    storage:
+      type: none
+    middlewares:
+      logging:
+        enabled: true
+      cors:
+        enabled: true
+        allow_origins: ["*"]
+        allow_methods: ["GET", "POST", "PUT", "DELETE"]
+        allow_headers: ["Authorization", "Content-Type"]
+      ratelimiter:
+        enabled: true
+        requests_per_second: 10
+        burst: 20
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      options:
+        enabled: true
+    devTools:
+      kubernetes: true
+      swagger: false
+      air: true
+      docker: false
+    plugins:
+      - tracing
+
+  - name: fiberapp
+    http:
+      framework: fiber
+      port: 8084
+    logger:
+      type: slog
+    config:
+      type: yaml
+    database:
+      type: none
+      migrations: false
+    auth:
+      type: jwt
+    storage:
+      type: none
+    middlewares:
+      logging:
+        enabled: true
+      cors:
+        enabled: true
+        allow_origins: ["*"]
+        allow_methods: ["GET", "POST", "PUT", "DELETE"]
+        allow_headers: ["Authorization", "Content-Type"]
+      ratelimiter:
+        enabled: true
+        requests_per_second: 10
+        burst: 20
+      exception_handler:
+        enabled: true
+      record_metrics:
+        enabled: true
+      options:
+        enabled: true
+    devTools:
+      kubernetes: false
+      swagger: true
+      air: true
+      docker: true
+    plugins:
+      - casbin

@@ -23,9 +23,45 @@ func ensureDir(path, feature, appName string) error {
 
 // renderTpl wraps renderer.RenderTemplate with error context.
 func renderTpl(app config.App, fs embed.FS, outputPath, tpl string) error {
-	if err := renderer.RenderTemplate(app, fs, outputPath, tpl); err != nil {
-		return fmt.Errorf("failed to render %s template for app %s: %w", tpl, app.Name, err)
+	tplPath := filepath.Join("templates", tpl)
+	tplData, err := fs.ReadFile(tplPath)
+	if err != nil {
+		return fmt.Errorf("failed to read template %s: %w", tplPath, err)
 	}
+
+	dir := filepath.Dir(tpl)
+	funcs := template.FuncMap{
+		"ToLower":   strings.ToLower,
+		"ToUpper":   strings.ToUpper,
+		"SnakeCase": renderer.ToSnakeCase,
+		"KebabCase": renderer.ToKebabCase,
+		"Title":     renderer.TitleFunc,
+		"default":   renderer.DefaultFunc,
+		"add":       func(a, b int) int { return a + b },
+		"join":      strings.Join,
+		// Add the include function for nested templates:
+		"include": func(name string) (string, error) {
+			return renderModularTemplate(app, fs, dir, name)
+		},
+	}
+
+	tplObj, err := template.New(filepath.Base(tpl)).Funcs(funcs).Parse(string(tplData))
+	if err != nil {
+		return fmt.Errorf("failed to parse template %s: %w", tpl, err)
+	}
+
+	var buf bytes.Buffer
+	if err := tplObj.Execute(&buf, app); err != nil {
+		return fmt.Errorf("failed to execute template %s: %w", tpl, err)
+	}
+
+	outputPath = filepath.Join(outputPath, dir)
+	// Write the output file as before...
+	outputFile := filepath.Join(outputPath, strings.TrimSuffix(filepath.Base(tpl), ".tpl"))
+	if err := os.WriteFile(outputFile, buf.Bytes(), 0600); err != nil {
+		return fmt.Errorf("failed to write output file %s: %w", outputFile, err)
+	}
+
 	return nil
 }
 
@@ -140,7 +176,7 @@ func renderLoggerTemplates(app config.App, appPath string) error {
 	if err := ensureDir(loggerDir, "loki logger", app.Name); err != nil {
 		return err
 	}
-	if err := renderTpl(app, TemplatesFS, appPath, "internal/logger/loki.go.tpl"); err != nil {
+	if err := renderTpl(app, TemplatesFS, appPath, "internal/logger/logger.go.tpl"); err != nil {
 		return err
 	}
 	return nil
@@ -168,13 +204,13 @@ func renderK8sTemplates(app config.App, appPath string) error {
 	if err := ensureDir(k8sDir, "k8s", app.Name); err != nil {
 		return err
 	}
-	if err := renderTpl(app, TemplatesFS, k8sDir, "k8s/deployment.yaml.tpl"); err != nil {
+	if err := renderTpl(app, TemplatesFS, appPath, "k8s/deployment.yaml.tpl"); err != nil {
 		return err
 	}
-	if err := renderTpl(app, TemplatesFS, k8sDir, "k8s/service.yaml.tpl"); err != nil {
+	if err := renderTpl(app, TemplatesFS, appPath, "k8s/service.yaml.tpl"); err != nil {
 		return err
 	}
-	if err := renderTpl(app, TemplatesFS, k8sDir, "k8s/ingress.yaml.tpl"); err != nil {
+	if err := renderTpl(app, TemplatesFS, appPath, "k8s/ingress.yaml.tpl"); err != nil {
 		return err
 	}
 	return nil
@@ -215,8 +251,14 @@ func GenerateApp(app config.App, appPath string) error {
 }
 
 // renderModularTemplate renders a modular template and returns its content
-func renderModularTemplate(app config.App, templatesFS embed.FS, templateName string) (string, error) {
-	embedPath := filepath.Join("templates", "main", templateName)
+func renderModularTemplate(app config.App, templatesFS embed.FS, dir, templateName string) (string, error) {
+	var embedPath string
+	if dir == "" || dir == "." {
+		fmt.Println("current dir")
+	} else {
+		embedPath = filepath.Join("templates", dir)
+	}
+	embedPath = filepath.Join(embedPath, templateName)
 	tplData, err := templatesFS.ReadFile(embedPath)
 	if err != nil {
 		return "", err
@@ -264,7 +306,7 @@ func renderTemplateWithModularSupport(app config.App, appPath, tplName string) e
 		"add":       func(a, b int) int { return a + b },
 		"join":      strings.Join,
 		"include": func(name string) (string, error) {
-			return renderModularTemplate(app, TemplatesFS, name)
+			return renderModularTemplate(app, TemplatesFS, "main", name)
 		},
 	}
 

@@ -8,6 +8,10 @@ import (
 	"github.com/Raj63/goappgen/internal/config"
 	"github.com/Raj63/goappgen/internal/generator"
 	"github.com/Raj63/goappgen/internal/generator/plugin"
+	"github.com/Raj63/goappgen/internal/generator/plugin/casbin"
+	"github.com/Raj63/goappgen/internal/generator/plugin/jwt"
+	"github.com/Raj63/goappgen/internal/generator/plugin/metrics"
+	"github.com/Raj63/goappgen/internal/generator/plugin/tracing"
 	"github.com/spf13/cobra"
 )
 
@@ -27,6 +31,11 @@ var generateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Error loading config: %v", err)
 		}
+		plugin.Register(tracing.New(generator.TemplatesFS))
+		plugin.Register(metrics.New(generator.TemplatesFS))
+		plugin.Register(jwt.New(generator.TemplatesFS))
+		plugin.Register(casbin.New(generator.TemplatesFS))
+
 		err = generator.GenerateAllWithPostGen(*cfg, outputPath, syncGoMod, dryRun)
 		if err != nil {
 			log.Fatalf("Error generating apps: %v", err)

@@ -57,6 +57,7 @@ func GenerateAll(appConfig config.AppConfig, outputBase string) error {
 		}
 		// After common templates...
 		for _, pl := range plugin.Plugins {
+			fmt.Println("plugin", pl.Name(), "is enabled", pl.IsEnabled(app))
 			if pl.IsEnabled(app) {
 				if err := pl.Run(app, appPath, ""); err != nil {
 					return fmt.Errorf("plugin %s: %w", pl.Name(), err)
